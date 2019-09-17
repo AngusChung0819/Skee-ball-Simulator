@@ -24,6 +24,7 @@ public class SkeeBall : MonoBehaviour {
     public int getScore;
 
     public float lifeTime = 5;
+    public float newBallDist = 35f;
 
     // Start is called before the first frame update
     void Start() {
@@ -37,25 +38,17 @@ public class SkeeBall : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (!released) {
-            if (Input.GetKeyDown("a")) {
-                timeBegin = Time.time;
-                loadingPower = true;
+        if (gameManager.gameStage == GameManager.GameStage.Gameplay) {
+            if (!released) {
+                TouchControl();
+            } else {
+                BallControl();
             }
-            if (Input.GetKeyUp("a")) {
-                loadingPower = false;
-                released = true;
-                rb.AddForce(0, 0, force);
-                //Destroy(this.gameObject, lifeTime);
+       
+            if (loadingPower) {
+                LoadPower();
             }
         }
-
-
-        if (loadingPower) {
-            LoadPower();
-        }
-
-
     }
 
     private void LoadPower() {
@@ -84,6 +77,58 @@ public class SkeeBall : MonoBehaviour {
     public void ResumeBall() {
         rb.velocity = tempSpeed;
         rb.useGravity = true;
+    }
+
+    // Touch Control
+    public void TouchControl() {
+        if (Input.touchCount > 0) {
+            Touch touch = Input.GetTouch(0);
+            switch (touch.phase) {
+                case TouchPhase.Began:
+                    timeBegin = Time.time;
+                    loadingPower = true;
+                    break;
+
+                case TouchPhase.Moved:
+                    float dist = Distance(Camera.main.transform.position, newBallPos.transform.position);
+                    Vector3 touchPosition = new Vector3(touch.position.x, touch.position.y, dist);
+                    Vector3 objPos = Camera.main.ScreenToWorldPoint(touchPosition);
+                    objPos.y = newBallPos.transform.position.y;
+                    objPos.z = newBallPos.transform.position.z;
+                    transform.position = objPos;
+
+                    break;
+                case TouchPhase.Ended:
+                    loadingPower = false;
+                    released = true;
+                    rb.AddForce(0, 0, force);
+                    StartCoroutine(NewBall(lifeTime));
+                    break;
+            }
+        }
+    }
+
+    private float Distance(Vector3 v1, Vector3 v2) {
+        return Mathf.Sqrt(Mathf.Pow(v1.x - v2.x, 2) + Mathf.Pow(v1.y - v2.y, 2) + Mathf.Pow(v1.z - v2.z, 2));
+    }
+
+    private void BallControl() {
+        float dist = Distance(Camera.main.transform.position, transform.position);
+        if (dist >= newBallDist) {
+            NewBall();
+        }
+    }
+
+    private void NewBall() {
+        Instantiate(skeeball, newBallPos.transform.position, newBallPos.transform.rotation);
+        Destroy(gameObject);
+    }
+
+    private IEnumerator NewBall(float second) {
+        yield return new WaitForSeconds(second); 
+        if (gameObject != null) {
+            NewBall();
+        }
     }
 
 }

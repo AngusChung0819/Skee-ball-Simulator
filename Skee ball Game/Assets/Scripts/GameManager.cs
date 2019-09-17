@@ -116,18 +116,18 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    // Mouse Click/ Tap control
-    private void MouseClick() {
-        if (Input.GetMouseButtonDown(0)) {
-            Debug.Log("clicking");
-            Ray toMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit rhInfo;
-            bool didHit = Physics.Raycast(toMouse, out rhInfo, 500.0f);
-            if (didHit && rhInfo.collider.tag == "SkeeBall") {
-                //????????????????????????
-            }
-        }
-    }
+    //// Mouse Click/ Tap control
+    //private void MouseClick() {
+    //    if (Input.GetMouseButtonDown(0)) {
+    //        Debug.Log("clicking");
+    //        Ray toMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //        RaycastHit rhInfo;
+    //        bool didHit = Physics.Raycast(toMouse, out rhInfo, 500.0f);
+    //        if (didHit && rhInfo.collider.tag == "SkeeBall") {
+    //            //????????????????????????
+    //        }
+    //    }
+    //}
 
     // From CountDown Stage to Gameplay Stage (Delay for cover openning)
     public IEnumerator CountDownToGameplay() {
