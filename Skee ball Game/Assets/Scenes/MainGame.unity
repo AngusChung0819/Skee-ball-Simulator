@@ -1993,7 +1993,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 9
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -2039,7 +2039,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0.1484375, z: 0.03125, w: -0.03125}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -5150,6 +5150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7c875a950b6db44b34d3185390d06b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   scoreTexts:
   - {fileID: 1877396595}
   - {fileID: 27643730}
@@ -5794,6 +5795,7 @@ MonoBehaviour:
   lowestScore: 0
   skeeball: {fileID: 0}
   mainMenu: {fileID: 0}
+  highScoreText: {fileID: 0}
   leaderBoardUI: {fileID: 0}
   cover: {fileID: 38898885}
   counterText: {fileID: 1589861211}
