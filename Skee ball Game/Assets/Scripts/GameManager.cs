@@ -35,18 +35,14 @@ public class GameManager : MonoBehaviour {
     public GameObject mainMenu;
     public Text highScoreText;
     public GameObject leaderBoardUI;
-
-    // CountDown
+    // CountDown UI
     public GameObject cover;
     public Text counterText;
-
     // Gameplay UI
     public TextMesh timerText;
     public TextMesh scoreText;
-
     // Pause Menu
     public GameObject pauseMenu;
-
     // Result Page
     public GameObject resultPage;
     public LeaderBoard leaderBoard;
@@ -54,7 +50,6 @@ public class GameManager : MonoBehaviour {
     public Text scoreFinal;
     public Text message;
     public GameObject restartButton;
-
 
     // Awake Checks - Singleton setup
     void Awake() {
@@ -70,12 +65,13 @@ public class GameManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        // Scene: Main Meun
         if (gameStage == GameStage.MainMenu) {
             leaderBoardUI.GetComponent<LeaderBoard>().LoadLeaderBoardPP();
             highestScore = leaderBoardUI.GetComponent<LeaderBoard>().scores[0];
             highScoreText.text = highestScore.ToString();
         }
-
+        // Scene: Main Game
         if (gameStage == GameStage.CountDown) {
             StartCoroutine(CountDownToGameplay());
             highestScore = PlayerPrefs.GetInt("Top1",0);
@@ -85,13 +81,24 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        // Gamee Stages
         switch (gameStage) {
+            case GameStage.MainMenu:
+                // Use of Escape button
+                if (Input.GetKeyDown(KeyCode.Escape)) {
+                    if (leaderBoardUI.activeSelf) {
+                        ExitLeaderboard();
+                    } else {
+                        QuitGame();
+                    }
+                }
+                break;
             case GameStage.CountDown:
-                //
+                // Nothing to do
                 gameSpeed = 0;
                 break;
             case GameStage.Gameplay:
-                // 
+                // Game loop
                 gameSpeed = 1;
                 UpdateScoreAndTime();
                 if (timeLeft <= 0) {
@@ -99,49 +106,52 @@ public class GameManager : MonoBehaviour {
                     gameStage = GameStage.Result;
                     ShowResult();
                 }
+                // Use of Escape button
+                if (Input.GetKeyDown(KeyCode.Escape)) {
+                    PauseGame();
+                }
                 break;
             case GameStage.Pause:
-                // 
+                // Use of Escape button
                 gameSpeed = 0;
+                if (Input.GetKeyDown(KeyCode.Escape)) {
+                    ResumeGame();
+                }
                 break;
             case GameStage.Result:
-                //
+                // Use of Escape button
                 gameSpeed = 0;
-
+                if (Input.GetKeyDown(KeyCode.Escape)) {
+                    HomeMeun();
+                }
                 break;
         }
 
+        // Delete all record on the local device
         if (Input.GetKeyDown("r")) {
             PlayerPrefs.DeleteAll();
+            highestScore = 0;
+            lowestScore = 0;
+            highScoreText.text = highestScore.ToString();
         }
+
+
     }
 
-    //// Mouse Click/ Tap control
-    //private void MouseClick() {
-    //    if (Input.GetMouseButtonDown(0)) {
-    //        Debug.Log("clicking");
-    //        Ray toMouse = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //        RaycastHit rhInfo;
-    //        bool didHit = Physics.Raycast(toMouse, out rhInfo, 500.0f);
-    //        if (didHit && rhInfo.collider.tag == "SkeeBall") {
-    //            //????????????????????????
-    //        }
-    //    }
-    //}
-
-    // From CountDown Stage to Gameplay Stage (Delay for cover openning)
+    // From CountDown Stage to Gameplay Stage
     public IEnumerator CountDownToGameplay() {
         cover.SetActive(true);
         for (int i = counter; i > 0; i--) {
+            // Count Down
             counterText.text = i.ToString();
             yield return new WaitForSeconds(1f);
         }
         counterText.text = "GO!";
         yield return new WaitForSeconds(1f);
+        // Start the game
         cover.SetActive(false);
         gameStage = GameStage.Gameplay;
     }
-
 
     // Reset Score and Time
     public void ResetScoreAndTime() {
@@ -161,12 +171,15 @@ public class GameManager : MonoBehaviour {
         resultPage.SetActive(true);
         // update message depends on score
         if (score >= highestScore) {
+            // New highest Score
             message.text = "Amazing!\nYou got the highest score!";
             restartButton.SetActive(false);
         } else if (score >= lowestScore) {
+            // Position at 2nd - 5th
             message.text = "You got a high score!\nNice Try!";
             restartButton.SetActive(true);
         } else {
+            // Score Too Low
             position.text = "---";
             message.text = "Your score is low.\nTry again!";
             restartButton.SetActive(true);
@@ -176,7 +189,7 @@ public class GameManager : MonoBehaviour {
         // Update Leaderboard
         leaderBoard = resultPage.GetComponent<LeaderBoard>();
         leaderBoard.NewScore(score);
-        // Check position
+        // Check and Show position
         for (int i = leaderBoard.scores.Count - 1; i >= 0; i--) {
             if (score >= leaderBoard.scores[i]) {
                 switch (i) {
@@ -199,11 +212,8 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
-
-
-
+    
     // ----------- Button Section ---------- //
-
     // Button Action: Start new game
     public void StartNewGame() {
         Debug.Log("Start New Game");
@@ -211,11 +221,11 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene("MainGame");
     }
 
-    //// Button Action: Quit Game
-    //public void QuitGame() {
-    //    Debug.Log("Quit");
-    //    Application.Quit();
-    //}
+    // Button Action: Quit Game (no Quit Button in game, just for the android Escape button)
+    public void QuitGame() {
+        Debug.Log("Quit");
+        Application.Quit();
+    }
 
     // Button Action: Pause Game
     public void PauseGame() {

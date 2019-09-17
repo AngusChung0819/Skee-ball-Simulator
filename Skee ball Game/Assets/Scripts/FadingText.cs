@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FadingText : MonoBehaviour
-{
+public class FadingText : MonoBehaviour {
 
     // Initial Variables
     public Text text;

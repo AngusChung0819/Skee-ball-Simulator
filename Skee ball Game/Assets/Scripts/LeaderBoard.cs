@@ -5,14 +5,16 @@ using UnityEngine.UI;
 
 public class LeaderBoard : MonoBehaviour {
 
+    // Game Manager
     public GameManager gameManager;
 
+    // Score Variables
     public List<Text> scoreTexts = new List<Text>();
     public List<int> scores = new List<int>();
 
     // Start is called before the first frame update
     void Start() {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>(); ;
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         LoadLeaderBoardPP();
     }
 
@@ -25,10 +27,12 @@ public class LeaderBoard : MonoBehaviour {
         LoadLeaderBoardPP();
     }
 
+    // Add new Score to top 5 list if it is higher then the current 5th score
     public void NewScore(int score) {
         Debug.Log(scores.Count);
         if (scores.Count >= 5) {
             if (score > scores[scoreTexts.Count - 1]) {
+                // Remove the current 5th score
                 scores.RemoveAt(scoreTexts.Count - 1);
                 scores.Add(score);
                 SortScores();
@@ -41,6 +45,7 @@ public class LeaderBoard : MonoBehaviour {
         }
     }
 
+    // Sort the Top 5 score list from highest to lowest
     public void SortScores() {
         for (int i = scores.Count - 1; i > 0; i--) {
             if (scores[i] > scores[i - 1]) {
@@ -52,6 +57,7 @@ public class LeaderBoard : MonoBehaviour {
         }
     }
 
+    // Update the score texts and PlayerPrefs
     public void UpdateLeaderBoardPP() {
         for (int i = 0; i < scores.Count; i++) {
             PlayerPrefs.SetInt("Top" + (i + 1), scores[i]);
@@ -59,6 +65,7 @@ public class LeaderBoard : MonoBehaviour {
         }
     }
 
+    // Reload the Top 5 score from PlayerPrefs
     public void LoadLeaderBoardPP() {
         scores = new List<int>();
         for (int i = 0; i < scoreTexts.Count; i++) {
@@ -67,6 +74,7 @@ public class LeaderBoard : MonoBehaviour {
         }
     }
 
+    // Clear the PlayerPrefs
     public void ClearRecords() {
         PlayerPrefs.DeleteAll();
     }
